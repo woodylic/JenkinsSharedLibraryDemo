@@ -7,17 +7,25 @@ def call(body) {
     pipeline {
         agent any
         stages {
-            stage('step 1') {
+            stage('Prepared') {
                 steps {
                     script {
-                        echo "step 1 complete! ${pipelineParams.param1}"
+                        IMAGE = "${pipelineParams.repository}:${pipelineParams.tag}"
+                        REMOTE_IMAGE = "${pipelineParams.registry}/$IMAGE"
                     }
                 }
             }
-            stage('step 2') {
+            stage('Docker build') {
                 steps {
                     script {
-                        echo "step 2 complete! ${pipelineParams.param2}"
+                        echo "docker build -t $IMAGE ${pipelineParams.dockerfilePath}"
+                    }
+                }
+            }
+            stage('Docker push') {
+                steps {
+                    script {
+                        echo "docker push $REMOTE_IMAGE"
                     }
                 }
             }
